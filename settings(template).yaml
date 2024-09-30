@@ -1,0 +1,4 @@
+project_id: MY_PROJECT_ID
+location: us-central1
+app_id_manuals: SEARCH_APP_ID
+app_id_safety_reports: OTHER_SEARCH_APP_ID
