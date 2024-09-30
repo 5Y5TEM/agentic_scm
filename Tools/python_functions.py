@@ -37,8 +37,10 @@ project_id = config["project_id"]
 location = config["location"]
 app_id_manuals = config["app_id_manuals"]
 app_id_safety_reports = config["app_id_safety_reports"]
-
-
+gcal_api_key = config["gcal_api_key"]
+workshop_gcal_ID = config["workshop_gcal_ID"]
+janeDoe_gcal_ID = config["janeDoe_gcal_ID"]
+johnSmith_gcal_ID = config["johnSmith_gcal_ID"]
 
 
 ########################################################################################################################
@@ -338,19 +340,19 @@ def get_upcoming_events(calendar_instance):
     """
 
     if calendar_instance == 'workshop':
-        calendar_id = 'ae485cd74108ed08424107fa89e3502087ea20ad5de3da1dbb17c6b8477a424b@group.calendar.google.com'
+        calendar_id = workshop_gcal_ID
 
     elif calendar_instance == 'Jane Doe':
-        calendar_id = '5c63150e3b97d2bbfc9ab1b942848029d9770af946d264d67b571999b93e4d66@group.calendar.google.com'
+        calendar_id = janeDoe_gcal_ID
 
     elif calendar_instance == 'John Smith':
-        calendar_id = '2f7a9d1d0665a82e36b387fa3c8f8560c133b12d337b68906e4df8033d3876df@group.calendar.google.com'
+        calendar_id = johnSmith_gcal_ID
 
     else: 
         return "You did not provide a valid calendar instance."
     
 
-    API_KEY = 'AIzaSyBQyMMyWo3D8r4fi4uPCYzprbZh4xeQABg'
+    API_KEY = gcal_api_key
 
     service = build('calendar', 'v3', developerKey=API_KEY)  # No credentials needed
 
