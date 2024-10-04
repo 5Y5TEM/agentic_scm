@@ -57,7 +57,7 @@ class Agent:
         tool_prompt = return_tool_instruction(self.tools)
 
         response = self.chat_session.send_message(
-            guidelines + persona_prompt + instruction_prompt + tool_prompt
+            guidelines + persona_prompt + instruction_prompt + tool_prompt, role='user'
         )
         return response.text
 
@@ -82,7 +82,7 @@ class Agent:
             print("\nNow executing function.\n")
             function_response = run_function(function, function_name, function_args)
             response = self.chat_session.send_message(
-                f"Here is the response from the function execution: <SYSTEM_INPUT>{str(function_response)}</SYSTEM_INPUT>"
+                f"Here is the response from your function execution: <SYSTEM_INPUT>{str(function_response)}</SYSTEM_INPUT>", role='user'
             )
             data = json.loads(response.text)
             response_list.append(data)

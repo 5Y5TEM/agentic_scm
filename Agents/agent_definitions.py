@@ -236,11 +236,15 @@ def get_ScheduleAgent(model):
                     - do not refer to the employees by their ID. instead, use their names.
                     - execute the tools one after the other, until you can provide all the necessary information at once. 
                     - Once you know the availability of the employee and the workshop, provide the next 3 slots where both the employee and the workshop are free.  
-
+                    - If the user writes "I need to schedule for Engine Maintenance." put the prompt "I need to schedule for Engine Maintenance." into the agents_prompt field.
+                    - It is your job to provide the exact dates back to the user. 
+                    
                     Use the tools available to you to: 
-                    1. Find the 'Employee Name' with the proper license to do the task the user asked for. If there are multiple employees that meet the requirement, provide their names to the user and let them know you are proceeding with one of them (select at random).
-                    2. Retrieve the availability of this employee by using their name.  
+                    1. Find the 'Employee Name' with the proper license by checking the 'Specialization' to do the task the user asked for. If there are multiple employees that meet the requirement, provide their names to the user and let them know you are proceeding with one of them (select at random).
+                    2. Retrieve the availability of this employee by using their name, e.g. John Smith.  
                     3. Retrieve the availability of the workshop. 
+                    4. Provide the dates for the next available slots for both the employee and the workshop in the format DD.MM.YYYY. 
+
                 """
 
 
@@ -290,3 +294,97 @@ def get_ScheduleAgent(model):
     agent = Agent(model, response_schema, PERSONA, INSTRUCTIONS, tools)
 
     return agent 
+
+
+
+
+
+def get_CustomsAgent(model):
+    """
+    This Customs Agent analyzes preferential treatment status for items based on CSV API response.
+    It extracts details such as Material Number (MATNR), Plant (WERKS), Preference Eligibility (PREFE), Region, and the expiry date.
+    The agent can check for a product at the supplier side, provide it's product ID, quantity left, price, and origin. 
+    The agent can further check the preferential treatment status for certain items. 
+    """
+
+    response_schema = {
+        "type": "array",
+        "items": {
+            "type": "object",
+            "properties": {
+                "understanding": {
+                    "type": "string",
+                },
+                "chain_of_thought": {
+                    "type": "string",
+                },
+                "response": {
+                    "type": "string",
+                },
+                "function": {
+                    "type": "string",
+                },
+                "function_name": {
+                    "type": "string",
+                },
+                "function_args": {
+                    "type": "string",
+                },
+                "execute_function": {
+                    "type": "string",
+                    "enum": [
+                        "True",
+                        "False"
+                    ],
+                },
+            },
+            "required": ["understanding", "chain_of_thought", "response", "function", "function_name", "function_args"],
+        },
+    }
+
+    PERSONA = "Customs Agent"
+
+    INSTRUCTIONS = """
+                    You are a customs agent that helps to analyze the preferential status of materials for international trade.
+                    Your job is to first find the material number for a given product, then interpret the information from a CSV response, such as Material Number (MATNR),
+                    Plant (WERKS), Preference Eligibility (PREFE), Region, and Preference Date (PREDA).
+                    - Figure out the part number for a given product by checking the 'ID' field from the returned dataframe response.
+                    - Identify if the material for a part number is eligible for preferential treatment in any specific region (e.g., EU).
+                    - Summarize which regions have preference eligibility and which do not, based on the data.
+                    - Clearly state the eligibility status and provide the validity period for each region.
+
+                    If a user is asking solely about the quantity, origin, or price of a product, you do not need to provide the preferential status details.
+                """
+
+    tools = """def getBOM() -> pd.DataFrame:
+                    \"\"\"Reads a CSV file ('Files/guidebushBOM.csv') and returns a Pandas DataFrame.
+
+                    The CSV file contains a bill of materials (BOM) for a product, 
+                    likely an airplane wing slat, with details on its components, 
+                    quantities, prices, suppliers, and origins.
+
+                    Returns:
+                        pd.DataFrame: A DataFrame containing the BOM data, with columns such as:
+                                    'ItemType', 'ItemParent', 'Transformat', 'Transformat id', 
+                                    'Quantity', 'UnitOfQuant', 'Name', 'Description', 
+                                    'PriceAmount', 'PriceCurrenc', 'Price Type', 'HsCode', 
+                                    'Supplierid', 'Origin', 'Sorting', 'Product Mate', 'STLAL', 'MSTAE'.
+                    \"\"\"
+
+                def get_preference_status() -> pd.DataFrame:
+                    \"\"\"Analyzes a CSV file to determine the preferential status of materials.
+
+                    Reads a CSV file ('Files/DeterminationOutput.csv'), extracts material details 
+                    (MATNR, WERKS, GZOLX, PREFE, PREDA, CODE), and determines preferential 
+                    treatment eligibility for each material in different regions.
+
+                    Returns:
+                        df: A dataframe of the preferential treatment status for each material, 
+                            including eligibility and region information.
+                    \"\"\"
+    """
+
+    # Create an instance of the Agent class
+    agent = Agent(model, response_schema, PERSONA, INSTRUCTIONS, tools)
+
+    return agent

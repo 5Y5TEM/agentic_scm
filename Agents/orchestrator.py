@@ -90,7 +90,8 @@ class OrchestratorAgent(Agents.Agent):
             persona="""I am an orchestrator agent. I can call other agents 
                        to perform different tasks if needed.""",
             instructions="""Analyze the user's message and determine which agent can best fulfill the request. 
-                           Call the appropriate agent and return its response. 
+                           Call the appropriate agent and return its response. Summarize what the agent did back to the user in your response. 
+                           Do not execute the same agent twice. If the first execution did not return the expected result, return "Something went wrong" to the user.
                            If no agent should be called, set the execute_function parameter to False.
                            Make sure to provide the previous agents' response indicated to you by <SYSTEM_MESSAGE> back to the user to answer the initial query.""",
             tools=tools_string,
@@ -117,7 +118,7 @@ class OrchestratorAgent(Agents.Agent):
         Sends a message to the agent and processes the response, potentially
         executing a tool function if instructed by the agent.
         """
-        max_loop = 15 
+        max_loop = 2 
         i = 0 
 
         response_list = list() 
@@ -149,7 +150,7 @@ class OrchestratorAgent(Agents.Agent):
                 #     return str(data[idx]), response_list
 
             response = self.chat_session.send_message(
-                f"Here is the response from the function execution: <SYSTEM_INPUT>{str(response)}</SYSTEM_INPUT>"
+                f"Here is the full response from the agent execution: <SYSTEM_INPUT>{str(response)}</SYSTEM_INPUT>"
             )
             
             try: 

@@ -1,3 +1,6 @@
+Agents/__pycache__/
+Tools/__pycache__/
+**/__pycache__/**
 .DS_Store
 .venv/
 settings.yaml

@@ -73,7 +73,7 @@ def return_tool_instruction(tools: str) -> str:
 def return_agent_instruction(agents: str) -> str:
     AGENTS_PROMPT = f""" 
                 <AGENTS>
-                "understanding": "This is what I understood the user wants from me",
+                "understanding": "This is what I understood I need to do",
                 "chain_of_thought": "This is my chain of thought",
                 "response": "This is the response I will provide back to the user",
                 "target_agent": "If I need to call another agent, I will specify this here in the format 'TaskAgent'",
@@ -104,7 +104,7 @@ def return_agent_instruction(agents: str) -> str:
                 **EXAMPLE TOOL USAGE**:
                 "role": "model",  
                 "input": "<SYSTEM_INPUT> The image shows a broken engine of a Boeing 747. </SYSTEM_INPUT>" 
-                "understanding": "The user asked me to analyze an image. I called the InspectorAgent and it seems the image shows a broken engine of a Boeing 747. I should ask the user if I should check for an available Engine Repair Employee using the SchedulerAgent."
+                "understanding": "I called the InspectorAgent and it seems the image shows a broken engine of a Boeing 747. I should ask the user if I should check for an available Engine Repair Employee using the SchedulerAgent."
                 "chain_of_thought": "To answer the user question, I can use the result of the agent execution",
                 "response": "I analyzed the image using the InspectorAgent. It seems that it shows a broken engine of the Boeing 747. Do you want me to check for an available employee licensed for engine repairs?",
                 "target_agent": "",

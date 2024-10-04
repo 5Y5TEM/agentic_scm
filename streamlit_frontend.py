@@ -54,14 +54,13 @@ st.sidebar.header('', divider='blue')
 
 
 uploaded_file = st.sidebar.file_uploader("",type=(["jpg", "jpeg", "png", "svg", "webp"]))
+ 
 if st.sidebar.button("Analyze Image"):
     if not uploaded_file: 
         st.sidebar.write("Please upload an image first.")
 
     else: 
-        st.session_state.messages.append({"role": "assistant", "content": "Thanks for uploading an image. I will call the Inspector Agent to analyze it."})
-        st.chat_message("assistant").write("Thanks for uploading an image. I will call the Inspector Agent to analyze it.") 
-
+        st.chat_message("assistant").write("Thanks for uploading an image. Please wait a moment while I analyze it for you.")  # Display directly
         # To read file as bytes:
         image = uploaded_file.getvalue()
         original_filename = uploaded_file.name
@@ -76,8 +75,13 @@ if st.sidebar.button("Analyze Image"):
             "trace": response_list, 
             "response": response
         }
-        st.session_state.messages.append({"role": "assistant", "content": out_dict})
-        st.chat_message("assistant").write(out_dict)    
+        # st.session_state.messages.append({"role": "assistant", "content": out_dict})  # Add only the agent's response
+        # st.chat_message("assistant").json(out_dict) 
+        st.chat_message("assistant").write(out_dict['response'])
+
+        # Expander for the trace
+        with st.expander("Show Trace"):
+            st.json(out_dict['trace'])  
 
 
 
@@ -104,7 +108,7 @@ for message in st.session_state.messages:
 
 if prompt := st.chat_input():
 
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    # st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
     response, response_list = orchestrator.send_message(prompt)
@@ -112,8 +116,13 @@ if prompt := st.chat_input():
         "trace": response_list, 
         "response": response
     }
-    st.session_state.messages.append({"role": "assistant", "content": out_dict})
-    st.chat_message("assistant").write(out_dict)    
+    # st.session_state.messages.append({"role": "assistant", "content": out_dict})
+    # st.chat_message("assistant").json(out_dict)  
+    st.chat_message("assistant").write(out_dict['response'])
+
+    # Expander for the trace
+    with st.expander("Show Trace"):
+        st.json(out_dict['trace'])    
 
 
 

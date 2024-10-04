@@ -17,6 +17,7 @@ import vertexai
 import json 
 import yaml 
 import Agents 
+from vertexai.generative_models import GenerativeModel
 
 def load_config():
     """Loads configuration parameters from settings.yaml in the root directory."""
@@ -41,22 +42,38 @@ orchestrator = Agents.OrchestratorAgent(model="gemini-1.5-pro-001")
 # Example usage
 print(orchestrator.start_conversation())
 
-response, response_list = orchestrator.send_message("I need to inspect an aircraft image: Files/TL-2000_StingSport.jpg")
-json_string = json.dumps(response_list, indent=4)
-print(response)
+# response, response_list = orchestrator.send_message("I need to inspect an aircraft image: Files/TL-2000_StingSport.jpg")
+# json_string = json.dumps(response_list, indent=4)
+# print(response)
 
-response = orchestrator.send_message("Can you provide me with the maintenance documents?")
-print(response)
+# response = orchestrator.send_message("Can you provide me with the maintenance documents?")
+# print(response)
 
-response = orchestrator.send_message("I need an engine repair expert.")
+# response = orchestrator.send_message("I need an engine repair expert.")
+response = orchestrator.send_message("I need to schedule for Engine Maintenance.")
 print(response)
 
 
 
 # # Get Agents 
-# InspectorAgent = Agents.get_InspectorAgent(model=GenerativeModel("gemini-1.5-pro-001"))
-# DocumentAgent = Agents.get_DocumentAgent(model=GenerativeModel("gemini-1.5-pro-001"))
-# SchedulerAgent = Agents.get_ScheduleAgent(model=GenerativeModel("gemini-1.5-pro-001"))
+InspectorAgent = Agents.get_InspectorAgent(model=GenerativeModel("gemini-1.5-pro-001"))
+DocumentAgent = Agents.get_DocumentAgent(model=GenerativeModel("gemini-1.5-pro-001"))
+SchedulerAgent = Agents.get_ScheduleAgent(model=GenerativeModel("gemini-1.5-pro-001"))
+CustomsAgent = Agents.get_CustomsAgent(model=GenerativeModel("gemini-1.5-pro-001"))
+
+
+# # ###### CUSTOMS AGENT ######
+# # Start the conversation
+# response = CustomsAgent.start_conversation()
+# print("\n")
+# print(response)
+# print("\n")
+
+# # Send a message to the agent
+# response = CustomsAgent.send_message("I need to replace an airplane wing slat for the TL Sting Sport 2000")
+# print(response)
+# print("\n")
+
 
 
 # ###### INSPECTOR AGENT ######
@@ -100,23 +117,9 @@ print(response)
 # print("\n")
 
 # # Send a message to the agent
-# response = SchedulerAgent.send_message("I need to find an expert for Engine Maintenance.")
+# response = SchedulerAgent.send_message("I need to schedule for Engine Maintenance.")
 # print(response)
 # print("\n")
 
-# # Send a message to the agent
-# response = SchedulerAgent.send_message("")
-# print(response)
-# print("\n")
-
-# # Send a message to the agent
-# response = SchedulerAgent.send_message("")
-# print(response)
-# print("\n")
-
-# # Send a message to the agent
-# response = SchedulerAgent.send_message("")
-# print(response)
-# print("\n")
 
 

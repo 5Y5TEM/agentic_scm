@@ -19,6 +19,10 @@ import yaml
 import requests
 import subprocess
 import json
+import csv
+import io 
+import pandas as pd
+
 
 
 def load_config():
@@ -74,7 +78,8 @@ def analyze_image(image_path: str):
     image_part = Part.from_image(Image.load_from_file(image_path))
 
     instructions= """
-                Tell me if the aircraft parts in the image are broken.
+                Tell me if the aircraft parts in the image are broken. Be very specific in your response. 
+                If the image contains an aircraft wing, tell me if the broken part is the slat or the flap. 
                 Respond with a valid JSON array of objects in this format:
                 {image_description: "", damaged: ""}. Where 'damaged' is a boolean variable.
                 Don't append anything other than the objects in response like "```json" etc.}
@@ -310,8 +315,8 @@ def get_employees():
     dataset_id = 'ascm'
     table_id = 'employees'
     df = read_bigquery_table(project_id, dataset_id, table_id)
-
-    return df 
+    data = df.to_dict(orient='records')
+    return data 
 
 
 ########################################################################################################################
@@ -365,4 +370,96 @@ def get_upcoming_events(calendar_instance):
     events = events_result.get('items',  [])
 
     return events
+
+
+
+
+
+
+def get_preference_status() -> pd.DataFrame:
+    """Analyzes a CSV file to determine the preferential status of materials.
+
+    Reads a CSV file ('Files/DeterminationOutput.csv'), extracts material details 
+    (MATNR, WERKS, GZOLX, PREFE, PREDA, CODE), and determines preferential 
+    treatment eligibility for each material in different regions.
+
+    Returns:
+        df: A dataframe of the preferential treatment status for each material, 
+             including eligibility and region information.
+    """
+    
+    csv_path = "Files/DeterminationOutput.csv"
+    df = pd.read_csv(csv_path)
+
+    # Convert the DataFrame to a dictionary
+    data = df.to_dict(orient='records')
+    
+
+    # with open(csv_path, 'r') as file:
+    #     csv_content = file.read()
+
+
+    # # Parse CSV content
+    # csv_reader = csv.reader(io.StringIO(csv_content))
+
+    # headers = next(csv_reader)
+    
+    # results = {}
+    # for row in csv_reader:
+    #     matnr, werks, gzolx, prefe, preda, code = row
+    #     matnr = matnr.strip()
+    #     gzolx = gzolx.strip()
+    #     prefe = prefe.strip()
+    #     preda = preda.strip()
+
+    #     if matnr not in results:
+    #         results[matnr] = []
+        
+    #     if prefe == "E":
+    #         eligibility = f"eligible for preferential treatment in region {gzolx} until {preda}."
+    #     elif prefe == "F":
+    #         eligibility = f"not eligible for preferential treatment (general region)."
+    #     else:
+    #         eligibility = f"has unspecified preference eligibility status."
+
+    #     results[matnr].append(f"Material {matnr} is {eligibility}")
+    
+    # # Generate summary response
+    # summary = ""
+    # for material, messages in results.items():
+    #     summary += f"Material {material}:\n"
+    #     summary += "\n".join(messages)
+    #     summary += "\n\n"
+
+    return data
+
+
+# summary = analyze_preference_status() 
+# print(summary)
+
+
+
+
+
+def getBOM() -> pd.DataFrame:
+    """Reads a CSV file ('Files/guidebushBOM.csv') and returns a Pandas DataFrame.
+
+    The CSV file contains a bill of materials (BOM) for a product, 
+    likely an airplane wing slat, with details on its components, 
+    quantities, prices, suppliers, and origins.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the BOM data, with columns such as:
+                    'ItemType', 'ItemParent', 'Transformat', 'Transformat id', 
+                    'Quantity', 'UnitOfQuant', 'Name', 'Description', 
+                    'PriceAmount', 'PriceCurrenc', 'Price Type', 'HsCode', 
+                    'Supplierid', 'Origin', 'Sorting', 'Product Mate', 'STLAL', 'MSTAE'.
+    """
+    csv_path = "Files/guidebushBOM.csv"
+    df = pd.read_csv(csv_path)
+    data = df.to_dict(orient='records')
+    return data
+
+
+
 
