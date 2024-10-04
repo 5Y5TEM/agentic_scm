@@ -2,7 +2,7 @@
 
 **ASCM** is an application that leverages Large Language Models (LLMs) and the power of agents to streamline and enhance maintenance and logistics processes within a supply chain context.
 
-![Architecture](Files/ascm_architecture.png)
+![Architecture](Files/architecture.png)
 
 ## 📂 Repo Structure
 Here's a breakdown of the repository's structure:
